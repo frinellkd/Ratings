@@ -12,9 +12,34 @@ db = SQLAlchemy()
 ##############################################################################
 # Model definitions
 
-# Delete this line and put your User/Movie/Ratings model classes here.
+class User(db.Model):
 
+    __tablename__ = "Users"
 
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    email = db.Column(db.String(64), nullable=True)
+    password = db.Column(db.String(64), nullable=True)
+    age = db.Column(db.Integer, nullable=True)
+    zipcode = db.Column(db.String(15), nullable=True)
+
+class Movies(db.Model):
+
+    __tablename__ = "Movies"
+
+    movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    movie_title = db.Column(db.String(200), nullable=False)
+    release_date = db.Column(db.DateTime, nullable=False)
+    IMDB_URL = db.Column(db.String(300), nullable=False)
+
+class Ratings(db.Model):
+
+    __tablename__ = "Ratings"
+
+    ratings_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    movie_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    
 ##############################################################################
 # Helper functions
 
