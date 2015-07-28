@@ -40,7 +40,7 @@ def load_movies():
         movie_title = row[1]
         # finding movie titles with trailing dates in () and removing the year.
         if "(" in movie_title:
-            movie_title = movie_title[:-6]
+            movie_title = movie_title[:-7]
 
         date = row[2]
         # finding if there were instances 
