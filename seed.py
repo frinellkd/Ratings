@@ -1,8 +1,9 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
+# makes data tables and ancilary programs avaialable.
 from model import Users, Ratings, Movies, connect_to_db, db
 from server import app
-import datetime
+
 from datetime import datetime
 
 def load_users():
@@ -10,15 +11,18 @@ def load_users():
     User_file = open('seed_data/u.user')
     
     for line in User_file:
+        # prepare line for reading data
         line.strip()
         row = line.split('|')
-        # user_id = row[0]
+        #sets variables to correct data
+        user_id = row[0]
         email = 'Null'
         password = 'Null'
         age = row[1]
         zip_code = row[4]
 
-        user = Users(email= email, 
+        user = Users(user_id=user_id,
+                    email= email, 
                     password= password, age=age, 
                     zipcode=zip_code[0:6])
 
@@ -32,21 +36,22 @@ def load_movies():
     for line in Movie_file:
         line.strip()
         row = line.split('|')
-        # movie_id = row[0]
+        movie_id = row[0]
         movie_title = row[1]
+        # finding movie titles with trailing dates in () and removing the year.
         if "(" in movie_title:
             movie_title = movie_title[:-6]
 
         date = row[2]
+        # finding if there were instances 
+        # where release date was null and accounting for them.
         if len(date) > 1:
             release_date = datetime.strptime(date, '%d-%b-%Y')
         else:
-            release_date = datetime.strptime("01-JAN-1000", '%d-%b-%Y')  
+            release_date = None
         IMDB_URL = row[3]
 
-        
-
-        movie = Movies(movie_title=movie_title,
+        movie = Movies(movie_id = movie_id, movie_title=movie_title,
                      release_date=release_date, IMDB_URL=IMDB_URL)
 
         db.session.add(movie) 
@@ -59,7 +64,7 @@ def load_ratings():
     for line in Ratings_file:
         line.strip()
         row = line.split('\t')
-        # ratings_id = 1
+        # ratings_id = 1 - this is kept out so the database will create the id as info is added.
         movie_id = row[0]
         user_id = row[1]
         score = row[2]
