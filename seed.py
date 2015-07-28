@@ -2,6 +2,7 @@
 
 from model import Users, Ratings, Movies, connect_to_db, db
 from server import app
+import datetime
 from datetime import datetime
 
 def load_users():
@@ -32,12 +33,15 @@ def load_movies():
         line.strip()
         row = line.split('|')
         # movie_id = row[0]
-        movie_title = row[:-6]
-        date = str(row[2].split('-'))
-        date2 = date[0] + " " + date[1] + " " + date[2]
-        
+        movie_title = row[1]
+        if "(" in movie_title:
+            movie_title = movie_title[:-6]
 
-        datetime.strptime(date2, '%d %b %Y')
+        date = row[2]
+        if len(date) > 1:
+            release_date = datetime.strptime(date, '%d-%b-%Y')
+        else:
+            release_date = datetime.strptime("01-JAN-1000", '%d-%b-%Y')  
         IMDB_URL = row[3]
 
         
