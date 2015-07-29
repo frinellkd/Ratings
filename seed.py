@@ -1,7 +1,7 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
 # makes data tables and ancilary programs avaialable.
-from model import Users, Ratings, Movies, connect_to_db, db
+from model import User, Rating, Movie, connect_to_db, db
 from server import app
 
 from datetime import datetime
@@ -21,13 +21,14 @@ def load_users():
         age = row[1]
         zip_code = row[4]
 
-        user = Users(user_id=user_id,
+        user = User(user_id=user_id,
                     email= email, 
                     password= password, age=age, 
                     zipcode=zip_code[0:6])
 
         db.session.add(user) 
-    db.session.commit()    
+    db.session.commit()  
+  
 
 def load_movies():
     """Load movies from u.item into database."""
@@ -51,7 +52,7 @@ def load_movies():
             release_date = None
         IMDB_URL = row[3]
 
-        movie = Movies(movie_id = movie_id, movie_title=movie_title,
+        movie = Movie(movie_id = movie_id, movie_title=movie_title,
                      release_date=release_date, IMDB_URL=IMDB_URL)
 
         db.session.add(movie) 
@@ -69,7 +70,7 @@ def load_ratings():
         user_id = row[1]
         score = row[2]
         
-        rate = Ratings(movie_id=movie_id, 
+        rate = Rating(movie_id=movie_id, 
             user_id=user_id, score=score)
 
         db.session.add(rate) 
