@@ -46,27 +46,42 @@ def login_submit():
     email = request.args.get("email")
     password = request.args.get("password")
 
-    current_users = db.session.query(User.email).filter_by(email=email).all()
+    current_users = db.session.query(User.email).filter_by(email=email, password=password).all()
     
     if len(current_users) >= 1:
         response = "yes"
+        user_id = email
     else:
-        response = "no"
-        #SQL Statement entering user info
-        user = User(email= email, 
+        if len(db.session.query(User.email).filter_by(email=email).all()) >= 1:
+            
+            return redirect('/login_form')
+
+        else:
+            response = "no"
+            #SQL Statement entering user info
+            user = User(email= email, 
                     password= password)
 
-        db.session.add(user) 
-        db.session.commit()
+            db.session.add(user) 
+            db.session.commit()
+            user_id = email
                
 
-    # if user_id:
-    #     session['user_id'] = user_id
+    if user_id:
+        session['user_id'] = user_id
+        
+        flash('You are logged in')
 
-    return  render_template("test.html", email=email, password=password, 
-        current_users=current_users, response=response)   
+    return redirect('/')
 
-    # $('#email').on
+@app.route('/logout')
+def log_out():
+
+    session.clear()
+    
+    return redirect('/')       
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
     # that we invoke the DebugToolbarExtension
