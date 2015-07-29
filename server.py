@@ -46,9 +46,9 @@ def login_submit():
     email = request.args.get("email")
     password = request.args.get("password")
 
-    current_users = User.query.filter_by(email=email).all()
+    current_users = db.session.query(User.email).filter_by(email=email).all()
     
-    if email in current_users:
+    if len(current_users) >= 1:
         response = "yes"
     else:
         response = "no"
