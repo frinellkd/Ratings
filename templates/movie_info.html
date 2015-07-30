@@ -3,20 +3,20 @@
 
     <h2>Hello</h2>
     <ul>
-        <li>User: {{ user.user_id }}</li>
-        <li>Age: {{ user.age }}</li>
-        <li>Zipcode: {{ user.zipcode }}</li>
+        <li>Movie Title: {{ movie.movie_title }}</li>
+        <li>Release Date: {{ movie.release_date }}</li>
+        <li><a href="{{ movie.IMDB_URL }}">IMDb Profile:</a></li>
     </ul>
         
         <h4>Movie Ratings:</h4> 
         <table>
             <tr>
-                <th>Movie Title</th>
+                <th>User ID</th>
                 <th>Movie Rating</th>
             </tr>
         {% for rating in movies_rated %}
             <tr>
-            <td>{{rating[2]}}</td>
+            <td>{{rating[1]}}</td>
             <td> {{rating[0]}}</td> 
             </tr>
         {% endfor %}    
