@@ -49,26 +49,26 @@ def login_submit():
     current_users = db.session.query(User.email).filter_by(email=email, password=password).all()
     
     if len(current_users) >= 1:
-        response = "yes"
-        user_id = email
+        session_id = email
+        
     else:
         if len(db.session.query(User.email).filter_by(email=email).all()) >= 1:
             
             return redirect('/login_form')
 
         else:
-            response = "no"
+            
             #SQL Statement entering user info
             user = User(email= email, 
                     password= password)
 
             db.session.add(user) 
             db.session.commit()
-            user_id = email
+            session_id = email
                
 
-    if user_id:
-        session['user_id'] = user_id
+    if session_id:
+        session['user_id'] = session_id
         
         flash('You are logged in')
 
@@ -78,8 +78,21 @@ def login_submit():
 def log_out():
 
     session.clear()
-    
+    flash('You are logged out.')
     return redirect('/')       
+
+@app.route('/users/<int:id>')
+def userinfo(id):
+
+    user_info = User.query.filter_by(user_id = id).one()
+    
+    rating_list = db.session.query(Rating.score,
+                                   Rating.movie_id,
+                                   Movie.movie_title).join(Movie).filter(Rating.user_id == id).all()
+    
+    return render_template("user_info.html", user=user_info, movies_rated=rating_list)
+
+
 
 
 if __name__ == "__main__":
