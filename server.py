@@ -119,9 +119,14 @@ def userrating(movie_id):
     userrating = int(request.form['user_rating'])
     
     email = session.get('user_id')
+    try:
+        user_id = db.session.query(User.user_id).filter_by(email=email).one()[0]
     
-    user_id = db.session.query(User.user_id).filter_by(email=email).one()[0]
-    
+    except:
+        flash("you must be logged in to rate a movie")
+        return redirect('/movies/' + str(movie_id))
+
+
     current_ratings = db.session.query(Rating).filter_by(user_id=user_id).filter_by(movie_id=movie_id).all()
     
     
@@ -129,7 +134,7 @@ def userrating(movie_id):
 
         current_ratings[0].score=userrating
         db.session.add(current_ratings[0])
-        print "Rating score  %s" % current_ratings[0].score       
+               
 
     else:
         user_rating = Rating(movie_id=movie_id,

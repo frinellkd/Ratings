@@ -66,8 +66,8 @@ def load_ratings():
         line.strip()
         row = line.split('\t')
         # ratings_id = 1 - this is kept out so the database will create the id as info is added.
-        movie_id = row[0]
-        user_id = row[1]
+        movie_id = row[1]
+        user_id = row[0]
         score = row[2]
         
         rate = Rating(movie_id=movie_id, 
