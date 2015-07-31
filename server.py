@@ -7,6 +7,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import User, Rating, Movie, connect_to_db, db
 
+from sqlalchemy import update
+
 import sqlite3
 
 db_connection = sqlite3.connect("ratings.db", check_same_thread=False)
@@ -97,7 +99,7 @@ def userinfo(id):
 def movies_list():
     """Show list of movies."""
 
-    movies = Movie.query.all()
+    movies = Movie.query.order_by(Movie.movie_title).all()
     return render_template("movies_list.html", movies=movies)
 
 @app.route('/movies/<int:id>')
@@ -106,9 +108,40 @@ def movieinfo(id):
     movie_info = Movie.query.filter_by(movie_id = id).one()
     
     rating_list = db.session.query(Rating.score,
-                                   Rating.user_id).filter(Rating.movie_id == id).all()
+                                   Rating.user_id).filter(Rating.movie_id == id).order_by(Rating.score).all()
+    print rating_list
+
 
     return render_template('movie_info.html', movie=movie_info, movies_rated=rating_list)
+
+@app.route('/test/<int:movie_id>', methods=["Post"])
+def userrating(movie_id):
+    userrating = int(request.form['user_rating'])
+    
+    email = session.get('user_id')
+    
+    user_id = db.session.query(User.user_id).filter_by(email=email).one()[0]
+    
+    current_ratings = db.session.query(Rating).filter_by(user_id=user_id).filter_by(movie_id=movie_id).all()
+    
+    
+    if len(current_ratings) >= 1:
+
+        current_ratings[0].score=userrating
+        db.session.add(current_ratings[0])
+        print "Rating score  %s" % current_ratings[0].score       
+
+    else:
+        user_rating = Rating(movie_id=movie_id,
+                            score= userrating, 
+                            user_id=user_id)
+
+        db.session.add(user_rating) 
+    db.session.commit()
+
+    flash('Thanks for rating this movie')
+    return redirect('/movies/' + str(movie_id))
+    
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the point
